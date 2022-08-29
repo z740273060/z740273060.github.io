@@ -1,0 +1,185 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>WiscKey | ZH的博客</title><meta name="keywords" content="键值存储文献"><meta name="author" content="ZH"><meta name="copyright" content="ZH"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="WiscKey: Separating Keys from Values  in SSD-conscious Storage简介：WiscKey是一种基于LSM树的持久键值存储，具有面向性能的数据布局，将键值分离，以最小化I&#x2F;O放大。   利用了设备的顺序和随机性能特性。 在微基准和YCSB工作负载方面的优势。 WiscKey加载数据库比LevelDB快2.5倍。 WiscKey在所有六">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WiscKey">
+<meta property="og:url" content="http://example.com/2022/08/18/%E9%94%AE%E5%80%BC%E5%AD%98%E5%82%A8%E6%96%87%E7%8C%AE/WiscKey/index.html">
+<meta property="og:site_name" content="ZH的博客">
+<meta property="og:description" content="WiscKey: Separating Keys from Values  in SSD-conscious Storage简介：WiscKey是一种基于LSM树的持久键值存储，具有面向性能的数据布局，将键值分离，以最小化I&#x2F;O放大。   利用了设备的顺序和随机性能特性。 在微基准和YCSB工作负载方面的优势。 WiscKey加载数据库比LevelDB快2.5倍。 WiscKey在所有六">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2022-08-18T13:15:03.717Z">
+<meta property="article:modified_time" content="2022-08-29T16:07:06.333Z">
+<meta property="article:author" content="ZH">
+<meta property="article:tag" content="键值存储文献">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2022/08/18/%E9%94%AE%E5%80%BC%E5%AD%98%E5%82%A8%E6%96%87%E7%8C%AE/WiscKey/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'WiscKey',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: undefined,
+  isToc: true,
+  postUpdate: '2022-08-30 00:07:06'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ZH的博客</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">WiscKey</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-08-18T13:15:03.717Z" title="发表于 2022-08-18 21:15:03">2022-08-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-08-29T16:07:06.333Z" title="更新于 2022-08-30 00:07:06">2022-08-30</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="WiscKey"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><h1 id="WiscKey-Separating-Keys-from-Values-in-SSD-conscious-Storage"><a href="#WiscKey-Separating-Keys-from-Values-in-SSD-conscious-Storage" class="headerlink" title="WiscKey: Separating Keys from Values  in SSD-conscious Storage"></a>WiscKey: Separating Keys from Values  in SSD-conscious Storage</h1><h2 id="简介："><a href="#简介：" class="headerlink" title="简介："></a>简介：</h2><p>WiscKey是一种基于LSM树的持久键值存储，具有面向性能的数据布局，将键值分离，以最小化I&#x2F;O放大。 </p>
+<blockquote>
+<p>利用了设备的顺序和随机性能特性。</p>
+<p>在微基准和YCSB工作负载方面的优势。</p>
+<p>WiscKey加载数据库比LevelDB快2.5倍。</p>
+<p>WiscKey在所有六个YCSB工作负载中都比LevelDB和RocksDB更快。</p>
+</blockquote>
+<p><strong>对于写密集型工作负载，基于日志结构合并树（LSM树）的键值存储已成为最先进的技术。</strong></p>
+<blockquote>
+<p><strong>保持了写入的顺序访问模式</strong>，B树上的小更新可能涉及许多随机写入，因此在固态存储设备或硬盘驱动器上都没有效率。</p>
+<p><strong>LSM树对键值对进行批处理并按顺序写入，</strong>同一数据在其整个生命周期内被多次读写。</p>
+<p>WiscKey背后的核心思想是键和值的分离，在LSM树中，只有键保持排序，而值单独存储在日志中。换句话说，我们在WiscKey中将密钥排序和垃圾收集解耦，而LevelDB将它们捆绑在一起。通过避免排序时不必要的值移动，此简单技术可以显著减少写入放大。</p>
+</blockquote>
+<p>WiscKey通过使用SSD设备丰富的内部并行性解决了这一挑战。其次，WiscKey需要垃圾收集来回收无效值使用的可用空间。WiscKey提出了一种在线轻量级垃圾收集器，它只涉及顺序I&#x2F;O，对前台工作负载的影响最小。第三，分离键和值使崩溃一致性具有挑战性；WiscKey利用了现代文件系统中一个有趣的特性，即在崩溃时附加不会导致垃圾数据。</p>
+<p><strong>SSD与HDD差异：</strong></p>
+<blockquote>
+<p>三个差异至关重要。首先，随机和顺序性能之间的差异并不像硬盘那样大；因此，执行大量顺序I&#x2F;O以减少后续随机I&#x2F;O的LSM树可能会不必要地浪费带宽。第二，SSD具有高度的内部并行性；构建在SSD之上的LSM必须仔细设计以利用所述并行性。第三，SSD可能会因重复写入而磨损；LSMtrees中的高写入放大显著缩短器件寿命。</p>
+</blockquote>
+<p>在WiscKey中将密钥排序和垃圾收集解耦，而LevelDB将它们捆绑在一起。通过避免排序时不必要的值移动，此简单技术可以显著减少写放大。</p>
+<h2 id="背景："><a href="#背景：" class="headerlink" title="背景："></a>背景：</h2><p>LSM树是一个写友好的结构</p>
+<p>写和读放大是LevelDB等LSM树中的主要问题。写（读）放大被定义为写（读）底层存储设备的数据量与用户请求的数据量之间的比率。</p>
+<p>避免随机写入的LSM树特性非常适合SSD；许多SSD优化的键值存储基于LSM树。</p>
+<p>但随机读取（与顺序读取相比）的相对性能在SSD上更好，因此目标是提高SSD设备上LSM树的性能，以有效利用设备带宽。</p>
+<h2 id="设计："><a href="#设计：" class="headerlink" title="设计："></a>设计：</h2><blockquote>
+<p>首先，WiscKey将键与值分开，仅将键保留在LSM树中，将值保留在单独的日志文件中。</p>
+<p>其次，为了处理未排序的值（在范围查询期间需要随机访问），WiscKey使用SSD设备的并行随机读取特性。</p>
+<p>第三，WiscKey利用独特的崩溃一致性和垃圾收集技术来有效管理价值日志。</p>
+<p>最后，WiscKey通过在不牺牲一致性的情况下删除LSM树日志来优化性能，从而减少小写操作的系统调用开销。</p>
+</blockquote>
+<p>键和值的分离使得范围查询需要随机I&#x2F;O。此外，这种分离使得垃圾收集和崩溃一致性都具有挑战性。</p>
+<p>由于键和值分别存储在Wiskey中，范围查询需要随机读取。</p>
+<blockquote>
+<p>WiscKey查询的基本思想是，对于SSD，只有密钥需要特别注意才能有效检索。只要有效检索键，范围查询就可以使用并行随机读取来有效检索值。</p>
+<p>一旦请求了一个连续的键值对序列，WiscKey就开始依次从lsm -树中读取后面的许多键。从lsm树中检索到的相应值地址被插入到队列中;多个线程将在后台并发地从vLog获取这些地址。</p>
+</blockquote>
+<p>在WiscKey中，只有无效的密钥会被LSMtree压缩回收。由于WiscKey不压缩值，它需要一个特殊的垃圾收集器来回收vLog中的空闲空间。</p>
+<blockquote>
+<p>在vLog中存储值的同时，也存储相应的键和值。新的数据布局元组(键大小、值大小、键、值)存储在vLog中。</p>
+<p>为了避免在垃圾收集期间发生崩溃时丢失任何数据，WiscKey必须确保在实际释放空间之前，新添加的有效值和新尾部在设备上是持久的。</p>
+</blockquote>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%94%AE%E5%80%BC%E5%AD%98%E5%82%A8%E6%96%87%E7%8C%AE/">键值存储文献</a></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/08/29/%E7%AC%94%E8%AE%B0/%E8%AF%BB%E7%A0%94%E8%A7%84%E5%88%92/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">读研规划</div></div></a></div><div class="next-post pull-right"><a href="/2022/08/18/Mit%E5%AD%A6%E4%B9%A0/Mit%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Mit学习资料</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#WiscKey-Separating-Keys-from-Values-in-SSD-conscious-Storage"><span class="toc-number">1.</span> <span class="toc-text">WiscKey: Separating Keys from Values  in SSD-conscious Storage</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">简介：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%EF%BC%9A"><span class="toc-number">1.2.</span> <span class="toc-text">背景：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%EF%BC%9A"><span class="toc-number">1.3.</span> <span class="toc-text">设计：</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By ZH</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
